@@ -13,7 +13,7 @@ You can find deploy history here: [VERSIONING.md](https://github.com/ethex-bet/e
 
 ## Changes made in the repo
 
-This fork implements a dynamic house edge in EthexLoto.sol as part of a candidate assessment. Previously the house edge was a fixed 10% constant regardless of how many cells a player marked. The updated logic adjusts the fee based on bet complexity:
+This repo implements a dynamic house edge in EthexLoto.sol as part of a candidate assessment. Previously the house edge was a fixed 10% constant regardless of how many cells a player marked. The updated logic adjusts the fee based on bet complexity:
 
 - 1 marked cell: 12% house edge
 - 2 to 3 marked cells: 10% house edge
