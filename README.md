@@ -11,7 +11,7 @@
 
 You can find deploy history here: [VERSIONING.md](https://github.com/ethex-bet/ethex-contracts/blob/master/VERSIONING.md)
 
-## Changes in This Fork
+## Changes made in the repo
 
 This fork implements a dynamic house edge in EthexLoto.sol as part of a candidate assessment. Previously the house edge was a fixed 10% constant regardless of how many cells a player marked. The updated logic adjusts the fee based on bet complexity:
 
