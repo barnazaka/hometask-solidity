@@ -1,4 +1,5 @@
 # Ethex Lottery Contracts
+
 ```javascript
 /**
  * (E)t)h)e)x) Loto Contract 
@@ -7,7 +8,20 @@
  *  http://ethex.bet
  */
 ```
+
 You can find deploy history here: [VERSIONING.md](https://github.com/ethex-bet/ethex-contracts/blob/master/VERSIONING.md)
+
+## Changes in This Fork
+
+This fork implements a dynamic house edge in EthexLoto.sol as part of a candidate assessment. Previously the house edge was a fixed 10% constant regardless of how many cells a player marked. The updated logic adjusts the fee based on bet complexity:
+
+- 1 marked cell: 12% house edge
+- 2 to 3 marked cells: 10% house edge
+- 4 to 6 marked cells: 8% house edge
+
+The getHouseEdge function was added as an internal pure function. The placeBet function was updated to determine markedCount before computing fees, and a require(markedCount > 0) guard was added to prevent invalid bets. The refund path in settleBets required no changes since betAmount is stored net of fees at placement time.
+
+Only EthexLoto.sol was modified. All other contracts, the public interface, and jackpot behaviour remain unchanged.
 
 ## Game Rules
 
@@ -48,7 +62,7 @@ The specific symbol (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F) | 1 : 16 | 
 
 If you select more symbols but guess less of them your prize rate will be lower than if you guess the exact number of cells, but you get the chance to win the Jackpot.
 
-_Note: prize rates are applied after deducting jackpot fee and house edge. The actual prize amount is limited to the current prize pool and is payed on the "first come first served" basis for all winners within the same block. Also note, that If the bet was not played, it can happen due to the network overload when the draw method call wasn’t mined within 256 blocks after the bet transaction due to Ethereum EVM limitation smart-contract has access only to the last 256 hashes, in this case, smart-contract returns the funds minus jackpot fee and house edge, but your bet still plays for the jackpots._
+_Note: prize rates are applied after deducting jackpot fee and house edge. The actual prize amount is limited to the current prize pool and is payed on the "first come first served" basis for all winners within the same block. Also note, that If the bet was not played, it can happen due to the network overload when the draw method call wasn't mined within 256 blocks after the bet transaction due to Ethereum EVM limitation smart-contract has access only to the last 256 hashes, in this case, smart-contract returns the funds minus jackpot fee and house edge, but your bet still plays for the jackpots._
 
 ## Jackpots and Superprize
 
@@ -62,7 +76,7 @@ Monthly Jackpot | 1/3 of Season Jackpot amount | Every 150000 block (roughly onc
 Season Jackpot | 1/4 of total Jackpot amount | Every 450000 block (roughly once every three months)
 Superprize | The full Jackpot amount | Immediately after the block with your bet is mined
 
-If you guess all of the last 6 symbols of the hash, you immideately vanish the amounts stored on both Ethex Lotto and Jackpot smart-contracts. You also get the general superprize amount stored on Ethex Superprize smart-contract. It is to be locked and paid out to the winner by 6 portions, every 150,000 blocks (approximately within 6 months). Each payment is about 10% bigger than the previous one. This helps to protect winners’ lifestyle and purchasing power in periods of inflation.
+If you guess all of the last 6 symbols of the hash, you immideately vanish the amounts stored on both Ethex Lotto and Jackpot smart-contracts. You also get the general superprize amount stored on Ethex Superprize smart-contract. It is to be locked and paid out to the winner by 6 portions, every 150,000 blocks (approximately within 6 months). Each payment is about 10% bigger than the previous one. This helps to protect winners lifestyle and purchasing power in periods of inflation.
 
 You can see the payouts calculation for the superprize winner based on the current state of the smart-contracts on [this page](https://ethex.bet/rules#jackpots).
 
@@ -72,10 +86,10 @@ When you select more than one cell and submit your bet, the smart-contract regis
 
 When the block of jackpot of a specific type is mined (i.e. next 35000-th block for the Weekly Jackpot), smart-contract uses its hexadecimal hash to convert it into the number and starts to count every bet registered for the jackpot. If there are less bets than the hash number, it continues to count from the first bet again and again, and so on until the hash number ends. The last bet before the count ends is the winner of the jackpot.
 
-> If the count stops on one of your bets, congratulation – you win the jackpot!
+> If the count stops on one of your bets, congratulation - you win the jackpot!
 
 To win the Superprize, you need to select the specific symbol for all 6 cells. If you guess all of the last 6 symbols of the next Ethereum block, you immediately win the whole prize pool and the full jackpot amount!
 
-> If you manage to guess all 6 symbol of the hash – you win the Superprize!
+> If you manage to guess all 6 symbol of the hash - you win the Superprize!
 
 _Note: if there is more than one person who guesses all 6 cells, the whole jackpot amount is divided proportionally between all winners, according to their bet amounts._
